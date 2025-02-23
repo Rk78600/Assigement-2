@@ -1,31 +1,28 @@
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Nav from "./Nav";
+import Timer from "./Timer"; 
+import ProfileCard from "./ProfileCard";
+import Counter from "./Counter";
+import DarkLight from "./DarkLight"
+import Card from "./Card"
 
-const Counter = () => {
-  const [count, setCount] = useState(0);
-
+function App() {
   return (
-    <div className="container mt-4 d-flex flex-column align-items-center">
-      <div className="card shadow-lg p-4 text-center" style={{ width: "18rem" }}>
-        <h3 className="mb-3">Counter: {count}</h3>
-        <div>
-          <button
-            className="btn btn-success mx-2"
-            onClick={() => setCount(count + 1)}
-          >
-            Increment
-          </button>
-          <button
-            className="btn btn-danger mx-2"
-            onClick={() => setCount(count - 1)}
-            disabled={count === 0}
-          >
-            Decrement
-          </button>
-        </div>
+    <Router>
+      <Nav/>
+      <div className="p-4">
+        <Routes>
+          <Route path="/" element={<h2>Welcome to Assignment 2</h2>} />
+          <Route path="/question1/" element={<Card/>}/>
+          <Route path="/question2/:initialTime" element={<Timer/>} />
+          <Route path="/question3/" element={<ProfileCard/>} />
+          <Route path="/question4/" element={<Counter/>} />
+          <Route path="/question5/" element={<DarkLight/>} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
-};
+}
 
-export default Counter;
+export default App;

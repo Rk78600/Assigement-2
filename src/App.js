@@ -1,64 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-const ProfileCard = () => {
-  const [name, setName] = useState("");
-  const [age, setAge] = useState("");
-  const [location, setLocation] = useState("");
-  const [error, setError] = useState("");
+const TimerApp = () => {
+  const { initialTime } = useParams();
+  const [time, setTime] = useState(Number(initialTime) || 0);
+  const [isRunning, setIsRunning] = useState(false);
+  const timerRef = useRef(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name.trim() || !age.trim() || !location.trim()) {
-      setError("All fields are required");
-      return;
+  useEffect(() => {
+    if (isRunning) {
+      timerRef.current = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(timerRef.current);
     }
-    if (isNaN(age) || age <= 0) {
-      setError("Age must be a valid positive number");
-      return;
-    }
-    setError("");
-    alert(`Hello, ${name}!`);
+    return () => clearInterval(timerRef.current);
+  }, [isRunning]);
+
+  const handleStartStop = () => {
+    setIsRunning(!isRunning);
+  };
+
+  const handleReset = () => {
+    setIsRunning(false);
+    setTime(Number(initialTime) || 0);
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   return (
-    <div className="container mt-4 d-flex flex-column align-items-center">
-      <div className="card shadow-lg p-4" style={{ width: "22rem", borderRadius: "10px" }}>
-        <h5 className="text-center fw-bold">Profile Details</h5>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label className="form-label">Name</label>
-            <input
-              type="text"
-              className="form-control"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Age</label>
-            <input
-              type="number"
-              className="form-control"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Location</label>
-            <input
-              type="text"
-              className="form-control"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-            />
-          </div>
-          {error && <div className="alert alert-danger">{error}</div>}
-          <button type="submit" className="btn btn-primary w-100">Submit</button>
-        </form>
+    <div className="container mt-4">
+      <nav className="navbar navbar-dark bg-dark mb-4">
+        <span className="navbar-brand mx-auto">React Timer</span>
+      </nav>
+      <div className="card shadow-lg p-4 text-center">
+        <h1 className="display-4">{formatTime(time)}</h1>
+        <div className="mt-3">
+          <button className="btn btn-success mx-2" onClick={handleStartStop}>
+            {isRunning ? "Stop" : "Start"}
+          </button>
+          <button className="btn btn-danger mx-2" onClick={handleReset}>
+            Reset
+          </button>
+        </div>
       </div>
     </div>
   );
 };
 
-export default ProfileCard;
+export default TimerApp;
